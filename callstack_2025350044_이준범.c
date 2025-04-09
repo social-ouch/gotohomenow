@@ -107,18 +107,15 @@ void func1(int arg1, int arg2, int arg3)
     strcpy(stack_info[SP], "var_1");
 
 
-    // func1의 스택 프레임 형성 (함수 프롤로그 + push)
+   
     print_stack();
     func2(11, 13);
-    // func2의 스택 프레임 제거 (함수 에필로그 + pop)
+    
 
 
     FP = SFP1;
-    SP--;
-    SP--;
-    SP--;
-    SP--;
-    SP--;
+    SP -= 5;
+   
     print_stack();
 }
 
@@ -149,20 +146,15 @@ void func2(int arg1, int arg2)
     call_stack[SP] = var_2;
     strcpy(stack_info[SP], "var_2");
 
-    // func2의 스택 프레임 형성 (함수 프롤로그 + push)
-
+   
 
     print_stack();
     func3(77);
 
-    // func3의 스택 프레임 제거 (함수 에필로그 + pop)
-
+   
     FP = SFP2;
-    SP--;
-    SP--;
-    SP--;
-    SP--;
-    SP--;
+    SP -= 5;
+   
 
     print_stack();
 }
@@ -208,12 +200,8 @@ int main()
     func1(1, 2, 3);
     // func1의 스택 프레임 제거 (함수 에필로그 + pop)
 
-    SP--;
-    SP--;
-    SP--;
-    SP--;
-    SP--;
-    SP--;
+    SP -= 6;
+   
 
     print_stack();
 
