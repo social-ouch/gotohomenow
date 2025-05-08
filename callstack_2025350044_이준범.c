@@ -1,51 +1,70 @@
-
 /*  call_stack
-    
-    ì‹¤ì œ ì‹œìŠ¤í…œì—ì„œëŠ” ìŠ¤íƒì´ ë©”ëª¨ë¦¬ì— ì €ì¥ë˜ì§€ë§Œ, ë³¸ ê³¼ì œì—ì„œëŠ” `int` ë°°ì—´ì„ ì´ìš©í•˜ì—¬ ë©”ëª¨ë¦¬ë¥¼ êµ¬í˜„í•©ë‹ˆë‹¤.
-    ì›ë˜ëŠ” SFPì™€ Return Addressì— ì‹¤ì œ ê°€ìƒ ë©”ëª¨ë¦¬ ì£¼ì†Œê°€ ë“¤ì–´ê°€ê² ì§€ë§Œ, ì´ë²ˆ ê³¼ì œì—ì„œëŠ” -1ë¡œ ëŒ€ì²´í•©ë‹ˆë‹¤.
-    
-    int call_stack[]      : ì‹¤ì œ ë°ì´í„°(`int ê°’`) ë˜ëŠ” `-1` (ë©”íƒ€ë°ì´í„° êµ¬ë¶„ìš©)ì„ ì €ì¥í•˜ëŠ” int ë°°ì—´ 
-    char stack_info[][]   : call_stack[]ê³¼ ê°™ì€ ìœ„ì¹˜(index)ì— ëŒ€í•œ ì„¤ëª…ì„ ì €ì¥í•˜ëŠ” ë¬¸ìì—´ ë°°ì—´
 
-    ==========================call_stack ì €ì¥ ê·œì¹™==========================
-    ë§¤ê°œ ë³€ìˆ˜ / ì§€ì—­ ë³€ìˆ˜ë¥¼ pushí•  ê²½ìš°   : int ê°’ ê·¸ëŒ€ë¡œ
-    Saved Frame Pointer ë¥¼ pushí•  ê²½ìš°  : call_stackì—ì„œì˜ index
-    ë°˜í™˜ ì£¼ì†Œê°’ì„ pushí•  ê²½ìš°       : -1
+    ½ÇÁ¦ ½Ã½ºÅÛ¿¡¼­´Â ½ºÅÃÀÌ ¸Ş¸ğ¸®¿¡ ÀúÀåµÇÁö¸¸, º» °úÁ¦¿¡¼­´Â `int` ¹è¿­À» ÀÌ¿ëÇÏ¿© ¸Ş¸ğ¸®¸¦ ±¸ÇöÇÕ´Ï´Ù.
+    ¿ø·¡´Â SFP¿Í Return Address¿¡ ½ÇÁ¦ °¡»ó ¸Ş¸ğ¸® ÁÖ¼Ò°¡ µé¾î°¡°ÚÁö¸¸, ÀÌ¹ø °úÁ¦¿¡¼­´Â -1·Î ´ëÃ¼ÇÕ´Ï´Ù.
+
+    int call_stack[]      : ½ÇÁ¦ µ¥ÀÌÅÍ(`int °ª`) ¶Ç´Â `-1` (¸ŞÅ¸µ¥ÀÌÅÍ ±¸ºĞ¿ë)À» ÀúÀåÇÏ´Â int ¹è¿­
+    char stack_info[][]   : call_stack[]°ú °°Àº À§Ä¡(index)¿¡ ´ëÇÑ ¼³¸íÀ» ÀúÀåÇÏ´Â ¹®ÀÚ¿­ ¹è¿­
+
+    ==========================call_stack ÀúÀå ±ÔÄ¢==========================
+    ¸Å°³ º¯¼ö / Áö¿ª º¯¼ö¸¦ pushÇÒ °æ¿ì   : int °ª ±×´ë·Î
+    Saved Frame Pointer ¸¦ pushÇÒ °æ¿ì  : call_stack¿¡¼­ÀÇ index
+    ¹İÈ¯ ÁÖ¼Ò°ªÀ» pushÇÒ °æ¿ì       : -1
     =======================================================================
-    
 
-    ==========================stack_info ì €ì¥ ê·œì¹™==========================
-    ë§¤ê°œ ë³€ìˆ˜ / ì§€ì—­ ë³€ìˆ˜ë¥¼ pushí•  ê²½ìš°        : ë³€ìˆ˜ì— ëŒ€í•œ ì„¤ëª…
-    Saved Frame Pointer ë¥¼ pushí•  ê²½ìš°  : ì–´ë–¤ í•¨ìˆ˜ì˜ SFPì¸ì§€
-    ë°˜í™˜ ì£¼ì†Œê°’ì„ pushí•  ê²½ìš°                 : "Return Address"
+
+    ==========================stack_info ÀúÀå ±ÔÄ¢==========================
+    ¸Å°³ º¯¼ö / Áö¿ª º¯¼ö¸¦ pushÇÒ °æ¿ì        : º¯¼ö¿¡ ´ëÇÑ ¼³¸í
+    Saved Frame Pointer ¸¦ pushÇÒ °æ¿ì  : ¾î¶² ÇÔ¼öÀÇ SFPÀÎÁö
+    ¹İÈ¯ ÁÖ¼Ò°ªÀ» pushÇÒ °æ¿ì                 : "Return Address"
     ========================================================================
 */
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
-#define STACK_SIZE 50 // ìµœëŒ€ ìŠ¤íƒ í¬ê¸°
+#define STACK_SIZE 50 // ÃÖ´ë ½ºÅÃ Å©±â
 
-int     call_stack[STACK_SIZE];         // Call Stackì„ ì €ì¥í•˜ëŠ” ë°°ì—´
-char    stack_info[STACK_SIZE][20];     // Call Stack ìš”ì†Œì— ëŒ€í•œ ì„¤ëª…ì„ ì €ì¥í•˜ëŠ” ë°°ì—´
+int     call_stack[STACK_SIZE];         // Call StackÀ» ÀúÀåÇÏ´Â ¹è¿­
+char    stack_info[STACK_SIZE][20];     // Call Stack ¿ä¼Ò¿¡ ´ëÇÑ ¼³¸íÀ» ÀúÀåÇÏ´Â ¹è¿­
 
 /*  SP (Stack Pointer), FP (Frame Pointer)
 
-    SPëŠ” í˜„ì¬ ìŠ¤íƒì˜ ìµœìƒë‹¨ ì¸ë±ìŠ¤ë¥¼ ê°€ë¦¬í‚µë‹ˆë‹¤.
-    ìŠ¤íƒì´ ë¹„ì–´ìˆì„ ë•Œ SP = -1, í•˜ë‚˜ê°€ ìŒ“ì´ë©´ `call_stack[0]` -> SP = 0, `call_stack[1]` -> SP = 1, ...
+    SP´Â ÇöÀç ½ºÅÃÀÇ ÃÖ»ó´Ü ÀÎµ¦½º¸¦ °¡¸®Åµ´Ï´Ù.
+    ½ºÅÃÀÌ ºñ¾îÀÖÀ» ¶§ SP = -1, ÇÏ³ª°¡ ½×ÀÌ¸é `call_stack[0]` -> SP = 0, `call_stack[1]` -> SP = 1, ...
 
-    FPëŠ” í˜„ì¬ í•¨ìˆ˜ì˜ ìŠ¤íƒ í”„ë ˆì„ í¬ì¸í„°ì…ë‹ˆë‹¤.
-    ì‹¤í–‰ ì¤‘ì¸ í•¨ìˆ˜ ìŠ¤íƒ í”„ë ˆì„ì˜ sfpë¥¼ ê°€ë¦¬í‚µë‹ˆë‹¤.
+    FP´Â ÇöÀç ÇÔ¼öÀÇ ½ºÅÃ ÇÁ·¹ÀÓ Æ÷ÀÎÅÍÀÔ´Ï´Ù.
+    ½ÇÇà ÁßÀÎ ÇÔ¼ö ½ºÅÃ ÇÁ·¹ÀÓÀÇ sfp¸¦ °¡¸®Åµ´Ï´Ù.
 */
-int SP = -1; 
+int SP = -1;
 int FP = -1;
-int SFP1, SFP2, SFP3;
+int home, SFP1, SFP2;
 
 void func1(int arg1, int arg2, int arg3);
 void func2(int arg1, int arg2);
 void func3(int arg1);
 
+void push(int num1, char str1[20])
+{
+    SP++;
+    if (num1 != -2) {
+        call_stack[SP] = num1;
+        strcpy(stack_info[SP], str1);
+    }
+    else {
+        call_stack[SP] = SP;
+        strcpy(stack_info[SP], str1);
+        FP = SP;
+    }
+}
 
-/*  
-    í˜„ì¬ call_stack ì „ì²´ë¥¼ ì¶œë ¥í•©ë‹ˆë‹¤.
-    í•´ë‹¹ í•¨ìˆ˜ì˜ ì¶œë ¥ ê²°ê³¼ë“¤ì„ ë°”íƒ•ìœ¼ë¡œ êµ¬í˜„ ì™„ì„±ë„ë¥¼ í‰ê°€í•  ì˜ˆì •ì…ë‹ˆë‹¤.
+void pop(void) {
+
+    strcpy(stack_info[SP], "\0");
+    SP--;
+}
+
+/*
+    ÇöÀç call_stack ÀüÃ¼¸¦ Ãâ·ÂÇÕ´Ï´Ù.
+    ÇØ´ç ÇÔ¼öÀÇ Ãâ·Â °á°úµéÀ» ¹ÙÅÁÀ¸·Î ±¸Çö ¿Ï¼ºµµ¸¦ Æò°¡ÇÒ ¿¹Á¤ÀÔ´Ï´Ù.
 */
 void print_stack()
 {
@@ -56,11 +75,11 @@ void print_stack()
     }
 
     printf("====== Current Call Stack ======\n");
-    
+
     for (int i = SP; i >= 0; i--)
     {
         if (call_stack[i] != -1)
-            printf("%d : %s = %d", i ,stack_info[i], call_stack[i]);
+            printf("%d : %s = %d", i, stack_info[i], call_stack[i]);
         else
             printf("%d : %s", i, stack_info[i]);
 
@@ -75,88 +94,123 @@ void print_stack()
 }
 
 
-//func ë‚´ë¶€ëŠ” ììœ ë¡­ê²Œ ì¶”ê°€í•´ë„ ê´œì°®ìœ¼ë‚˜, ì•„ë˜ì˜ êµ¬ì¡°ë¥¼ ë°”ê¾¸ì§€ëŠ” ë§ˆì„¸ìš”
+//func ³»ºÎ´Â ÀÚÀ¯·Ó°Ô Ãß°¡ÇØµµ ±¦ÂúÀ¸³ª, ¾Æ·¡ÀÇ ±¸Á¶¸¦ ¹Ù²ÙÁö´Â ¸¶¼¼¿ä
 void func1(int arg1, int arg2, int arg3)
 {
-    int var_1 = 100;
+    if (home == 1)
+    {
+        push(arg3, "arg3");
+        push(arg2, "arg2");
+        push(arg1, "arg1");
 
-    SP++;
-    call_stack[SP] = arg3;
-    strcpy(stack_info[SP], "arg3");
+        int var_1 = 100;
 
-    SP++;
-    call_stack[SP] = arg2;
-    strcpy(stack_info[SP], "arg2");
+        push(-1, "Return Address");
+        push(-2, "func1 SFP");
 
-    SP++;
-    call_stack[SP] = arg1;
-    strcpy(stack_info[SP], "arg1");
+        push(var_1, "var_1");
 
-    SP++;
-    call_stack[SP] = -1;
-    strcpy(stack_info[SP], "Return Address");
+        SFP1 = FP;
+    }
 
-    SP++;
-    call_stack[SP] = SP;
-    strcpy(stack_info[SP], "func1 SFP");
-    FP = SP;
-    SFP1 = SP;
+    int res;
 
-    SP++;
-    call_stack[SP] = var_1;
-    strcpy(stack_info[SP], "var_1");
+    do
+    {
+        printf(" ¹«¾ùÀ» ÇÒ±î?? \n");
+        printf("1 : pop     2 : push    3 : exit    4 : show stack \n");
+        scanf(" %d", &res);
 
 
-    // func1ì˜ ìŠ¤íƒ í”„ë ˆì„ í˜•ì„± (í•¨ìˆ˜ í”„ë¡¤ë¡œê·¸ + push)
-    print_stack();
-    func2(11, 13);
-    // func2ì˜ ìŠ¤íƒ í”„ë ˆì„ ì œê±° (í•¨ìˆ˜ ì—í•„ë¡œê·¸ + pop)
+        if (res == 2)
+        {
+            printf("\npush¸¦ ¼±ÅÃÇÏ¼Ì½À´Ï´Ù.\n\n");
+            home = 1;
+            func2(11, 13);
+        }
 
+        else if (res == 1) 
+        {
+            printf("\npopÀ» ¼±ÅÃÇÏ¼Ì½À´Ï´Ù.\n\n");
 
-    FP = SFP1;
-    SP -= 5;
-   
-    print_stack();
+            pop();
+            pop();
+            pop();
+            pop();
+            pop();
+            pop();
+
+            main();
+        }
+
+        else if (res == 4)
+        {
+            print_stack();
+        }
+
+        else if (res == 3) printf("Á¾·áÇÕ´Ï´Ù");
+    
+    } while (res == 4);
 }
 
 
 void func2(int arg1, int arg2)
 {
-    int var_2 = 200;
+    if (home == 1) 
+    {
+        int var_2 = 200;
 
-    SP++;
-    call_stack[SP] = arg2;
-    strcpy(stack_info[SP], "arg2");
+        push(arg2, "arg2");
+        push(arg1, "arg1");
 
-    SP++;
-    call_stack[SP] = arg1;
-    strcpy(stack_info[SP], "arg1");
+        push(-1, "Return Address");
+        push(-2, "func2 SFP");
 
-    SP++;
-    call_stack[SP] = -1;
-    strcpy(stack_info[SP], "Return Address");
+        push(var_2, "var_2");
 
-    SP++;
-    call_stack[SP] = SP;
-    strcpy(stack_info[SP], "func2 SFP");
-    FP = SP;
-    SFP2 = SP;
+        SFP2 = FP;
+    }
 
-    SP++;
-    call_stack[SP] = var_2;
-    strcpy(stack_info[SP], "var_2");
+    int res;
 
-    // func2ì˜ ìŠ¤íƒ í”„ë ˆì„ í˜•ì„± (í•¨ìˆ˜ í”„ë¡¤ë¡œê·¸ + push)
+    do
+    {
+        printf(" ¹«¾ùÀ» ÇÒ±î?? \n");
+        printf("1 : pop     2 : push    3 : exit    4 : show stack \n");
+        scanf(" %d", &res);
 
 
-    print_stack();
-    func3(77);
+        if (res == 2)
+        {
+            printf("\npush¸¦ ¼±ÅÃÇÏ¼Ì½À´Ï´Ù.\n\n");
+            func3(77);
+        }
 
-    // func3ì˜ ìŠ¤íƒ í”„ë ˆì„ ì œê±° (í•¨ìˆ˜ ì—í•„ë¡œê·¸ + pop)
+        else if (res == 1)
+        {
+            printf("\npopÀ» ¼±ÅÃÇÏ¼Ì½À´Ï´Ù.\n\n");
 
-    FP = SFP2;
-    SP -= 5;
-    print_stack();
+            pop();
+            pop();
+            pop();
+            pop();
+            pop();
+
+            FP = SFP1;
+            home = 2;
+            func1(0,0,0);
+        }
+
+        else if (res == 4)
+        {
+            print_stack();
+        }
+
+        else if (res == 3) printf("Á¾·áÇÕ´Ï´Ù");
+
+    } while (res == 4);
+
+    
 }
 
 
@@ -165,46 +219,89 @@ void func3(int arg1)
     int var_3 = 300;
     int var_4 = 400;
 
-    SP++;
-    call_stack[SP] = arg1;
-    strcpy(stack_info[SP], "arg1");
+    push(arg1, "arg1");
 
-    SP++;
-    call_stack[SP] = -1;
-    strcpy(stack_info[SP], "Return Address");
+    push(-1, "Return Address");
+    push(-2, "func3 SFP");
 
-    SP++;
-    call_stack[SP] = SP;
-    strcpy(stack_info[SP], "func3 SFP");
-    FP = SP;
-    SFP3 = SP;
+    push(var_3, "var_3");
+    push(var_4, "var_4");
+
+    int res;
+
+    do
+    {
+        printf(" ¹«¾ùÀ» ÇÒ±î?? \n");
+        printf("1 : pop     2 : push    3 : exit    4 : show stack \n");
+        scanf(" %d", &res);
 
 
-    SP++;
-    call_stack[SP] = var_3;
-    strcpy(stack_info[SP], "var_3");
+        if (res == 2)
+        {
+            printf("\npush¸¦ ¼±ÅÃÇÏ¼Ì½À´Ï´Ù.\n\n");
+            printf("Stack is full !\n");
 
-    SP++;
-    call_stack[SP] = var_4;
-    strcpy(stack_info[SP], "var_4");
-    
+        }
 
-    // func3ì˜ ìŠ¤íƒ í”„ë ˆì„ í˜•ì„± (í•¨ìˆ˜ í”„ë¡¤ë¡œê·¸ + push)
-    print_stack();
+        else if (res == 1)
+        {
+            printf("\npopÀ» ¼±ÅÃÇÏ¼Ì½À´Ï´Ù.\n\n");
+
+            pop();
+            pop();
+            pop();
+            pop();
+            pop();
+
+            FP = SFP2;
+            home = 2;
+            func2(0, 0);
+        }
+
+        else if (res == 4)
+        {
+            print_stack();
+        }
+
+        else if (res == 3) printf("Á¾·áÇÕ´Ï´Ù");
+
+    } while (res == 4 | res == 2);
+
+   
 }
 
 
-//main í•¨ìˆ˜ì— ê´€ë ¨ëœ stack frameì€ êµ¬í˜„í•˜ì§€ ì•Šì•„ë„ ë©ë‹ˆë‹¤.
+//main ÇÔ¼ö¿¡ °ü·ÃµÈ stack frameÀº ±¸ÇöÇÏÁö ¾Ê¾Æµµ µË´Ï´Ù.
 int main()
-{
-    func1(1, 2, 3);
-    // func1ì˜ ìŠ¤íƒ í”„ë ˆì„ ì œê±° (í•¨ìˆ˜ ì—í•„ë¡œê·¸ + pop)
+{   
+    int res;
+    do {
+        
+        printf("¹«¾ùÀ» ÇÒ±î? \n");
+        printf("1 : pop     2 : push    3 : exit    4 : show stack \n");
+        scanf(" %d", &res);
 
-    SP -= 6;
-   
+        if (res == 2)
+        {
+            printf("\npush¸¦ ¼±ÅÃÇÏ¼Ì½À´Ï´Ù.\n\n");
+            home = 1;
+            func1(1, 2, 3);
+        }
 
-    print_stack();
+        else if (res == 1) 
+        {
+            printf("\npopÀ» ¼±ÅÃÇÏ¼Ì½À´Ï´Ù.\n\n");
 
+            printf("stack is empty!\n");
+        }
 
+        else if (res == 4)
+        {
+            print_stack();
+        }
+
+        else if (res == 3) printf("Á¾·áÇÕ´Ï´Ù");
+
+    } while (res == 1 | res == 4);
     return 0;
 }
